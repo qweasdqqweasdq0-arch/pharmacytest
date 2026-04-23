@@ -1,0 +1,13 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+class Medicine extends Model
+{
+    protected $fillable = ['name', 'description', 'price', 'stock', 'pharmacy_id'];
+
+    public function pharmacy() {
+        return $this->belongsTo(Pharmacy::class);
+    }
+}
