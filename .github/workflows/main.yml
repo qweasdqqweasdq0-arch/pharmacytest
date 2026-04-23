@@ -1,0 +1,31 @@
+name: Software Testing Pipeline
+
+on: [push, pull_request]
+
+jobs:
+  security_scan:
+    name: GitLeaks Security Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Check for secrets
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  laravel_tests:
+    name: Run Unit & Integration Tests
+    runs-on: ubuntu-latest
+    needs: security_scan
+    steps:
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+      - uses: actions/checkout@v3
+      - name: Install Dependencies
+        run: composer install --progress --no-suggest
+      - name: Execute Tests
+        run: php artisan test
+
